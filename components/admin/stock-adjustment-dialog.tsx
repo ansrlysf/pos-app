@@ -1,32 +1,49 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent } from "@/components/ui/card"
-import { useAppStore } from "@/lib/store"
-import { useToast } from "@/hooks/use-toast"
-import { Package, Plus, Minus, RotateCcw } from "lucide-react"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { useAppStore } from "@/lib/store";
+import { useToast } from "@/hooks/use-toast";
+import { Package, Plus, Minus, RotateCcw } from "lucide-react";
 
 interface StockAdjustmentDialogProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  product: any
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  product: any;
 }
 
-export function StockAdjustmentDialog({ open, onOpenChange, product }: StockAdjustmentDialogProps) {
-  const { updateProduct } = useAppStore()
-  const [adjustmentType, setAdjustmentType] = useState<"add" | "subtract" | "set">("add")
-  const [quantity, setQuantity] = useState<number>(0)
-  const [reason, setReason] = useState("")
-  const [note, setNote] = useState("")
-  const { toast } = useToast()
+export function StockAdjustmentDialog({
+  open,
+  onOpenChange,
+  product,
+}: StockAdjustmentDialogProps) {
+  const { updateProduct } = useAppStore();
+  const [adjustmentType, setAdjustmentType] = useState<
+    "add" | "subtract" | "set"
+  >("add");
+  const [quantity, setQuantity] = useState<number>(0);
+  const [reason, setReason] = useState("");
+  const [note, setNote] = useState("");
+  const { toast } = useToast();
 
-  if (!product) return null
+  if (!product) return null;
 
   const handleAdjustment = () => {
     if (quantity <= 0 && adjustmentType !== "set") {
@@ -34,49 +51,49 @@ export function StockAdjustmentDialog({ open, onOpenChange, product }: StockAdju
         title: "Quantity tidak valid",
         description: "Masukkan quantity yang valid",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    let newStock = product.stock
+    let newStock = product.stock;
     switch (adjustmentType) {
       case "add":
-        newStock = product.stock + quantity
-        break
+        newStock = product.stock + quantity;
+        break;
       case "subtract":
-        newStock = Math.max(0, product.stock - quantity)
-        break
+        newStock = Math.max(0, product.stock - quantity);
+        break;
       case "set":
-        newStock = quantity
-        break
+        newStock = quantity;
+        break;
     }
 
-    updateProduct(product.id, { stock: newStock })
+    updateProduct(product.id, { stock: newStock });
 
     toast({
       title: "Stock berhasil disesuaikan",
       description: `Stock ${product.name} diubah dari ${product.stock} menjadi ${newStock}`,
-    })
+    });
 
     // Reset form
-    setQuantity(0)
-    setReason("")
-    setNote("")
-    onOpenChange(false)
-  }
+    setQuantity(0);
+    setReason("");
+    setNote("");
+    onOpenChange(false);
+  };
 
   const getNewStock = () => {
     switch (adjustmentType) {
       case "add":
-        return product.stock + quantity
+        return product.stock + quantity;
       case "subtract":
-        return Math.max(0, product.stock - quantity)
+        return Math.max(0, product.stock - quantity);
       case "set":
-        return quantity
+        return quantity;
       default:
-        return product.stock
+        return product.stock;
     }
-  }
+  };
 
   const reasonOptions = [
     "Restock dari supplier",
@@ -87,7 +104,7 @@ export function StockAdjustmentDialog({ open, onOpenChange, product }: StockAdju
     "Kehilangan/pencurian",
     "Koreksi sistem",
     "Lainnya",
-  ]
+  ];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -95,11 +112,11 @@ export function StockAdjustmentDialog({ open, onOpenChange, product }: StockAdju
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5" />
-            Stock Adjustment
+            Stock Adjustmentasd
           </DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-auto h-[60vh]">
           {/* Product Info */}
           <Card>
             <CardContent className="p-4">
@@ -153,7 +170,9 @@ export function StockAdjustmentDialog({ open, onOpenChange, product }: StockAdju
 
           {/* Quantity */}
           <div className="space-y-2">
-            <Label>{adjustmentType === "set" ? "Stock Baru" : "Quantity"}</Label>
+            <Label>
+              {adjustmentType === "set" ? "Stock Baru" : "Quantity"}
+            </Label>
             <Input
               type="number"
               min="0"
@@ -174,11 +193,19 @@ export function StockAdjustmentDialog({ open, onOpenChange, product }: StockAdju
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Stock Baru:</span>
-                  <span className="font-bold text-primary">{getNewStock()} unit</span>
+                  <span className="font-bold text-primary">
+                    {getNewStock()} unit
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span>Perubahan:</span>
-                  <span className={getNewStock() - product.stock >= 0 ? "text-green-600" : "text-red-600"}>
+                  <span
+                    className={
+                      getNewStock() - product.stock >= 0
+                        ? "text-green-600"
+                        : "text-red-600"
+                    }
+                  >
                     {getNewStock() - product.stock >= 0 ? "+" : ""}
                     {getNewStock() - product.stock} unit
                   </span>
@@ -217,15 +244,23 @@ export function StockAdjustmentDialog({ open, onOpenChange, product }: StockAdju
 
           {/* Actions */}
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => onOpenChange(false)} className="flex-1 bg-transparent">
+            <Button
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+              className="flex-1 bg-transparent"
+            >
               Batal
             </Button>
-            <Button onClick={handleAdjustment} className="flex-1" disabled={!reason}>
+            <Button
+              onClick={handleAdjustment}
+              className="flex-1"
+              disabled={!reason}
+            >
               Terapkan Adjustment
             </Button>
           </div>
         </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

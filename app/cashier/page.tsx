@@ -1,38 +1,46 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useAppStore } from "@/lib/store"
-import { useOfflineStore } from "@/lib/offline-store"
-import { CashierHeader } from "@/components/cashier/cashier-header"
-import { ProductGrid } from "@/components/cashier/product-grid"
-import { ProductSearch } from "@/components/cashier/product-search"
-import { Cart } from "@/components/cashier/cart"
-import { MobileCart } from "@/components/cashier/mobile-cart"
-import { MobileCartToggle } from "@/components/cashier/mobile-cart-toggle"
-import { TransactionHistory } from "@/components/cashier/transaction-history"
-import { KeyboardShortcuts } from "@/components/cashier/keyboard-shortcuts"
-import { LoyaltyProgram } from "@/components/cashier/loyalty-program"
-import { SyncStatus } from "@/components/sync-status"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ShoppingCart, History, Keyboard, Gift, Users, BarChart3 } from "lucide-react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react";
+import { useAppStore } from "@/lib/store";
+import { useOfflineStore } from "@/lib/offline-store";
+import { CashierHeader } from "@/components/cashier/cashier-header";
+import { ProductGrid } from "@/components/cashier/product-grid";
+import { ProductSearch } from "@/components/cashier/product-search";
+import { Cart } from "@/components/cashier/cart";
+import { MobileCart } from "@/components/cashier/mobile-cart";
+import { MobileCartToggle } from "@/components/cashier/mobile-cart-toggle";
+import { TransactionHistory } from "@/components/cashier/transaction-history";
+import { KeyboardShortcuts } from "@/components/cashier/keyboard-shortcuts";
+import { LoyaltyProgram } from "@/components/cashier/loyalty-program";
+import { SyncStatus } from "@/components/sync-status";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ShoppingCart,
+  History,
+  Keyboard,
+  Gift,
+  Users,
+  BarChart3,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function CashierPage() {
-  const { currentUser, isAuthenticated, cart, hasPermission, currentShift } = useAppStore()
-  const { addOfflineAction } = useOfflineStore()
-  const [showMobileCart, setShowMobileCart] = useState(false)
-  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false)
-  const [activeTab, setActiveTab] = useState("pos")
-  const [selectedCustomer, setSelectedCustomer] = useState("")
-  const router = useRouter()
+  const { currentUser, isAuthenticated, cart, hasPermission, currentShift } =
+    useAppStore();
+  const { addOfflineAction } = useOfflineStore();
+  const [showMobileCart, setShowMobileCart] = useState(false);
+  const [showKeyboardShortcuts, setShowKeyboardShortcuts] = useState(false);
+  const [activeTab, setActiveTab] = useState("pos");
+  const [selectedCustomer, setSelectedCustomer] = useState("");
+  const router = useRouter();
 
   useEffect(() => {
     if (!isAuthenticated) {
-      router.push("/")
-      return
+      router.push("/");
+      return;
     }
 
     // Auto-login as cashier for demo purposes
@@ -44,17 +52,17 @@ export default function CashierPage() {
         role: "cashier" as const,
         cashierRole: "senior",
         createdAt: new Date(),
-      }
+      };
       // This would normally be handled by a proper login system
     }
-  }, [isAuthenticated, currentUser, router])
+  }, [isAuthenticated, currentUser, router]);
 
   // Add offline action when cart changes
   useEffect(() => {
     if (cart.length > 0) {
-      addOfflineAction("CART_UPDATE", { cart, timestamp: new Date() })
+      addOfflineAction("CART_UPDATE", { cart, timestamp: new Date() });
     }
-  }, [cart, addOfflineAction])
+  }, [cart, addOfflineAction]);
 
   if (!isAuthenticated || !currentUser) {
     return (
@@ -64,7 +72,7 @@ export default function CashierPage() {
           <p>Loading...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -75,7 +83,11 @@ export default function CashierPage() {
       <div className="bg-white dark:bg-gray-800 border-b px-4 py-2">
         <div className="flex justify-between items-center">
           <div className="text-sm text-muted-foreground">
-            {currentShift ? <span>Shift aktif - {currentUser.name}</span> : <span>Shift belum dimulai</span>}
+            {currentShift ? (
+              <span>Shift aktif - {currentUser.name}</span>
+            ) : (
+              <span>Shift belum dimulai</span>
+            )}
           </div>
           <SyncStatus />
         </div>
@@ -133,7 +145,10 @@ export default function CashierPage() {
                 customerId={selectedCustomer}
                 onRewardApplied={(reward) => {
                   // Apply reward to current transaction
-                  addOfflineAction("LOYALTY_REWARD_APPLIED", { reward, customerId: selectedCustomer })
+                  addOfflineAction("LOYALTY_REWARD_APPLIED", {
+                    reward,
+                    customerId: selectedCustomer,
+                  });
                 }}
               />
 
@@ -149,11 +164,17 @@ export default function CashierPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-center p-3 bg-muted rounded-lg">
                       <div className="text-2xl font-bold text-primary">156</div>
-                      <div className="text-sm text-muted-foreground">Member Aktif</div>
+                      <div className="text-sm text-muted-foreground">
+                        Member Aktif
+                      </div>
                     </div>
                     <div className="text-center p-3 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">2,340</div>
-                      <div className="text-sm text-muted-foreground">Poin Ditukar Hari Ini</div>
+                      <div className="text-2xl font-bold text-green-600">
+                        2,340
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Poin Ditukar Hari Ini
+                      </div>
                     </div>
                   </div>
 
@@ -193,8 +214,14 @@ export default function CashierPage() {
                   <div className="text-center py-8 text-muted-foreground">
                     <Users className="h-16 w-16 mx-auto mb-4 opacity-50" />
                     <p className="text-lg">Fitur Customer Management</p>
-                    <p className="text-sm">Kelola data customer, riwayat pembelian, dan program loyalitas</p>
-                    <Button className="mt-4" onClick={() => setActiveTab("loyalty")}>
+                    <p className="text-sm">
+                      Kelola data customer, riwayat pembelian, dan program
+                      loyalitas
+                    </p>
+                    <Button
+                      className="mt-4"
+                      onClick={() => setActiveTab("loyalty")}
+                    >
                       Buka Program Loyalitas
                     </Button>
                   </div>
@@ -205,7 +232,9 @@ export default function CashierPage() {
                 <div className="text-muted-foreground">
                   <Users className="h-16 w-16 mx-auto mb-4 opacity-50" />
                   <p className="text-lg">Akses Ditolak</p>
-                  <p className="text-sm">Anda tidak memiliki izin untuk mengakses data customer</p>
+                  <p className="text-sm">
+                    Anda tidak memiliki izin untuk mengakses data customer
+                  </p>
                 </div>
               </div>
             )}
@@ -219,7 +248,9 @@ export default function CashierPage() {
                 <div className="text-muted-foreground">
                   <History className="h-16 w-16 mx-auto mb-4 opacity-50" />
                   <p className="text-lg">Akses Ditolak</p>
-                  <p className="text-sm">Anda tidak memiliki izin untuk melihat riwayat transaksi</p>
+                  <p className="text-sm">
+                    Anda tidak memiliki izin untuk melihat riwayat transaksi
+                  </p>
                 </div>
               </div>
             )}
@@ -229,7 +260,7 @@ export default function CashierPage() {
 
       {/* Mobile Cart Toggle */}
       <div className="lg:hidden">
-        <MobileCartToggle cartCount={cart.length} onClick={() => setShowMobileCart(true)} />
+        <MobileCartToggle />
       </div>
 
       {/* Mobile Cart Overlay */}
@@ -243,14 +274,19 @@ export default function CashierPage() {
       <Button
         variant="outline"
         size="icon"
-        className="fixed bottom-4 left-4 z-40 bg-transparent"
+        className="fixed bottom-4 left-4 z-40 bg-white"
         onClick={() => setShowKeyboardShortcuts(true)}
       >
         <Keyboard className="h-4 w-4" />
       </Button>
 
       {/* Keyboard Shortcuts Dialog */}
-      <KeyboardShortcuts open={showKeyboardShortcuts} onOpenChange={setShowKeyboardShortcuts} />
+      <KeyboardShortcuts
+        onOpenScanner={() => {}}
+        onOpenCart={() => {}}
+        onClearCart={() => {}}
+        // onOpenChange={setShowKeyboardShortcuts}
+      />
     </div>
-  )
+  );
 }

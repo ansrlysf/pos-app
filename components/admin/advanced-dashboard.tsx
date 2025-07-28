@@ -1,13 +1,19 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAppStore } from "@/lib/store"
-import { useOfflineStore } from "@/lib/offline-store"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useState } from "react";
+import { useAppStore } from "@/lib/store";
+import { useOfflineStore } from "@/lib/offline-store";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   TrendingUp,
   ShoppingCart,
@@ -18,33 +24,51 @@ import {
   Wifi,
   WifiOff,
   Activity,
-  BarChartIcon as Bar,
   PieChartIcon as RechartsPieChart,
   PhoneIcon as Cell,
   MapPin,
   BarChartIcon as Bar,
-} from "lucide-react"
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Pie, BarChart } from "recharts"
+  BarChart3,
+} from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Pie,
+  BarChart,
+} from "recharts";
 
 interface SystemAlert {
-  id: string
-  type: "info" | "warning" | "error" | "success"
-  title: string
-  message: string
-  timestamp: Date
-  resolved: boolean
-  severity: "low" | "medium" | "high" | "critical"
-  branchId?: string
-  branchName?: string
+  id: string;
+  type: "info" | "warning" | "error" | "success";
+  title: string;
+  message: string;
+  timestamp: Date;
+  resolved: boolean;
+  severity: "low" | "medium" | "high" | "critical";
+  branchId?: string;
+  branchName?: string;
 }
 
 export function AdvancedDashboard() {
-  const { transactions, products, customers, currentShift, currentUser, branches = [] } = useAppStore()
+  const {
+    transactions,
+    products,
+    customers,
+    currentShift,
+    currentUser,
+    branches = [],
+  } = useAppStore();
 
-  const { isOnline, pendingActions, lastSyncTime, syncInProgress } = useOfflineStore()
+  const { isOnline, pendingActions, lastSyncTime, syncInProgress } =
+    useOfflineStore();
 
-  const [selectedTimeRange, setSelectedTimeRange] = useState("today")
-  const [selectedBranch, setSelectedBranch] = useState("all")
+  const [selectedTimeRange, setSelectedTimeRange] = useState("today");
+  const [selectedBranch, setSelectedBranch] = useState("all");
   const [systemAlerts, setSystemAlerts] = useState<SystemAlert[]>([
     {
       id: "1",
@@ -79,18 +103,21 @@ export function AdvancedDashboard() {
       branchId: "branch2",
       branchName: "Cabang Mall",
     },
-  ])
+  ]);
 
   // Calculate metrics
   const todayTransactions = transactions.filter((t) => {
-    const transactionDate = new Date(t.createdAt)
-    const today = new Date()
-    return transactionDate.toDateString() === today.toDateString()
-  })
+    const transactionDate = new Date(t.createdAt);
+    const today = new Date();
+    return transactionDate.toDateString() === today.toDateString();
+  });
 
-  const todayRevenue = todayTransactions.reduce((sum, t) => sum + t.finalTotal, 0)
-  const averageOrderValue = todayRevenue / todayTransactions.length || 0
-  const lowStockProducts = products.filter((p) => p.stock < 10)
+  const todayRevenue = todayTransactions.reduce(
+    (sum, t) => sum + t.finalTotal,
+    0
+  );
+  const averageOrderValue = todayRevenue / todayTransactions.length || 0;
+  const lowStockProducts = products.filter((p) => p.stock < 10);
 
   // Mock data for charts
   const salesData = [
@@ -102,65 +129,73 @@ export function AdvancedDashboard() {
     { time: "14:00", sales: 38000, transactions: 24 },
     { time: "15:00", sales: 45000, transactions: 30 },
     { time: "16:00", sales: 52000, transactions: 34 },
-  ]
+  ];
 
   const paymentMethodData = [
     { name: "Cash", value: 45, color: "#10b981" },
     { name: "Card", value: 35, color: "#3b82f6" },
     { name: "Digital", value: 20, color: "#8b5cf6" },
-  ]
+  ];
 
   const branchPerformance = [
     { branch: "Cabang Utama", sales: 125000, transactions: 89 },
     { branch: "Cabang Mall", sales: 98000, transactions: 67 },
     { branch: "Cabang Plaza", sales: 87000, transactions: 54 },
-  ]
+  ];
 
   const getShiftDuration = () => {
-    if (!currentShift) return "00:00:00"
+    if (!currentShift) return "00:00:00";
 
     const startTime =
-      typeof currentShift.startTime === "string" ? new Date(currentShift.startTime) : currentShift.startTime
+      typeof currentShift.startTime === "string"
+        ? new Date(currentShift.startTime)
+        : currentShift.startTime;
 
-    const now = new Date()
-    const diff = now.getTime() - startTime.getTime()
+    const now = new Date();
+    const diff = now.getTime() - startTime.getTime();
 
-    const hours = Math.floor(diff / (1000 * 60 * 60))
-    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diff % (1000 * 60)) / 1000)
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-    return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-  }
+    return `${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  };
 
   const resolveAlert = (alertId: string) => {
-    setSystemAlerts((alerts) => alerts.map((alert) => (alert.id === alertId ? { ...alert, resolved: true } : alert)))
-  }
+    setSystemAlerts((alerts) =>
+      alerts.map((alert) =>
+        alert.id === alertId ? { ...alert, resolved: true } : alert
+      )
+    );
+  };
 
   const getAlertIcon = (type: string) => {
     switch (type) {
       case "error":
-        return <AlertTriangle className="h-4 w-4 text-red-500" />
+        return <AlertTriangle className="h-4 w-4 text-red-500" />;
       case "warning":
-        return <AlertTriangle className="h-4 w-4 text-yellow-500" />
+        return <AlertTriangle className="h-4 w-4 text-yellow-500" />;
       case "success":
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 text-green-500" />;
       default:
-        return <Activity className="h-4 w-4 text-blue-500" />
+        return <Activity className="h-4 w-4 text-blue-500" />;
     }
-  }
+  };
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
       case "critical":
-        return "border-red-500 bg-red-50"
+        return "border-red-500 bg-red-50";
       case "high":
-        return "border-orange-500 bg-orange-50"
+        return "border-orange-500 bg-orange-50";
       case "medium":
-        return "border-yellow-500 bg-yellow-50"
+        return "border-yellow-500 bg-yellow-50";
       default:
-        return "border-blue-500 bg-blue-50"
+        return "border-blue-500 bg-blue-50";
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -170,8 +205,14 @@ export function AdvancedDashboard() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">
-                {isOnline ? <Wifi className="h-5 w-5 text-green-500" /> : <WifiOff className="h-5 w-5 text-red-500" />}
-                <span className="font-medium">{isOnline ? "Online" : "Offline"}</span>
+                {isOnline ? (
+                  <Wifi className="h-5 w-5 text-green-500" />
+                ) : (
+                  <WifiOff className="h-5 w-5 text-red-500" />
+                )}
+                <span className="font-medium">
+                  {isOnline ? "Online" : "Offline"}
+                </span>
               </div>
 
               {currentShift && (
@@ -181,11 +222,17 @@ export function AdvancedDashboard() {
                 </div>
               )}
 
-              {pendingActions.length > 0 && <Badge variant="secondary">{pendingActions.length} pending sync</Badge>}
+              {pendingActions.length > 0 && (
+                <Badge variant="secondary">
+                  {pendingActions.length} pending sync
+                </Badge>
+              )}
             </div>
 
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              {lastSyncTime && <span>Last sync: {lastSyncTime.toLocaleTimeString()}</span>}
+              {lastSyncTime && (
+                <span>Last sync: {lastSyncTime.toLocaleTimeString()}</span>
+              )}
               {syncInProgress && (
                 <div className="flex items-center gap-1">
                   <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary"></div>
@@ -201,11 +248,15 @@ export function AdvancedDashboard() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="transition-all duration-300 hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Today's Revenue</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Today's Revenue
+            </CardTitle>
             <DollarSign className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">Rp {todayRevenue.toLocaleString("id-ID")}</div>
+            <div className="text-2xl font-bold text-green-600">
+              Rp {todayRevenue.toLocaleString("id-ID")}
+            </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 text-green-500" />
               <span>+12.5% from yesterday</span>
@@ -219,7 +270,9 @@ export function AdvancedDashboard() {
             <ShoppingCart className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{todayTransactions.length}</div>
+            <div className="text-2xl font-bold text-blue-600">
+              {todayTransactions.length}
+            </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 text-green-500" />
               <span>+8.2% from yesterday</span>
@@ -233,7 +286,9 @@ export function AdvancedDashboard() {
             <BarChart3 className="h-4 w-4 text-purple-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-purple-600">Rp {averageOrderValue.toLocaleString("id-ID")}</div>
+            <div className="text-2xl font-bold text-purple-600">
+              Rp {averageOrderValue.toLocaleString("id-ID")}
+            </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <TrendingUp className="h-3 w-3 text-green-500" />
               <span>+5.1% from yesterday</span>
@@ -243,11 +298,15 @@ export function AdvancedDashboard() {
 
         <Card className="transition-all duration-300 hover:shadow-lg">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Low Stock Items</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Low Stock Items
+            </CardTitle>
             <AlertTriangle className="h-4 w-4 text-orange-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{lowStockProducts.length}</div>
+            <div className="text-2xl font-bold text-orange-600">
+              {lowStockProducts.length}
+            </div>
             <div className="flex items-center gap-1 text-xs text-muted-foreground">
               <span>Need attention</span>
             </div>
@@ -269,7 +328,9 @@ export function AdvancedDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Sales Trend</CardTitle>
-                <CardDescription>Hourly sales performance today</CardDescription>
+                <CardDescription>
+                  Hourly sales performance today
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -277,8 +338,18 @@ export function AdvancedDashboard() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="time" />
                     <YAxis />
-                    <Tooltip formatter={(value) => [`Rp ${value.toLocaleString("id-ID")}`, "Sales"]} />
-                    <Line type="monotone" dataKey="sales" stroke="#3b82f6" strokeWidth={2} />
+                    <Tooltip
+                      formatter={(value) => [
+                        `Rp ${value.toLocaleString("id-ID")}`,
+                        "Sales",
+                      ]}
+                    />
+                    <Line
+                      type="monotone"
+                      dataKey="sales"
+                      stroke="#3b82f6"
+                      strokeWidth={2}
+                    />
                   </LineChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -288,7 +359,9 @@ export function AdvancedDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Payment Methods</CardTitle>
-                <CardDescription>Distribution of payment methods today</CardDescription>
+                <CardDescription>
+                  Distribution of payment methods today
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
@@ -305,7 +378,7 @@ export function AdvancedDashboard() {
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>
-                    <Tooltip />
+                    {/* <Tooltip /> */}
                   </RechartsPieChart>
                 </ResponsiveContainer>
               </CardContent>
@@ -336,25 +409,37 @@ export function AdvancedDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Branch Performance</CardTitle>
-              <CardDescription>Sales performance across all branches today</CardDescription>
+              <CardDescription>
+                Sales performance across all branches today
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {branchPerformance.map((branch, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-primary/10 rounded-full">
                         <MapPin className="h-4 w-4 text-primary" />
                       </div>
                       <div>
                         <div className="font-medium">{branch.branch}</div>
-                        <div className="text-sm text-muted-foreground">{branch.transactions} transactions</div>
+                        <div className="text-sm text-muted-foreground">
+                          {branch.transactions} transactions
+                        </div>
                       </div>
                     </div>
                     <div className="text-right">
-                      <div className="font-bold text-green-600">Rp {branch.sales.toLocaleString("id-ID")}</div>
+                      <div className="font-bold text-green-600">
+                        Rp {branch.sales.toLocaleString("id-ID")}
+                      </div>
                       <div className="text-sm text-muted-foreground">
-                        Avg: Rp {(branch.sales / branch.transactions).toLocaleString("id-ID")}
+                        Avg: Rp{" "}
+                        {(branch.sales / branch.transactions).toLocaleString(
+                          "id-ID"
+                        )}
                       </div>
                     </div>
                   </div>
@@ -375,7 +460,9 @@ export function AdvancedDashboard() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-sm">Online</span>
                   </div>
-                  <div className="text-xs text-muted-foreground">Last sync: 2 minutes ago</div>
+                  <div className="text-xs text-muted-foreground">
+                    Last sync: 2 minutes ago
+                  </div>
                   <div className="text-xs">Active cashiers: 3</div>
                 </div>
               </CardContent>
@@ -391,7 +478,9 @@ export function AdvancedDashboard() {
                     <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
                     <span className="text-sm">Syncing</span>
                   </div>
-                  <div className="text-xs text-muted-foreground">Last sync: 15 minutes ago</div>
+                  <div className="text-xs text-muted-foreground">
+                    Last sync: 15 minutes ago
+                  </div>
                   <div className="text-xs">Active cashiers: 2</div>
                 </div>
               </CardContent>
@@ -407,7 +496,9 @@ export function AdvancedDashboard() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <span className="text-sm">Online</span>
                   </div>
-                  <div className="text-xs text-muted-foreground">Last sync: 1 minute ago</div>
+                  <div className="text-xs text-muted-foreground">
+                    Last sync: 1 minute ago
+                  </div>
                   <div className="text-xs">Active cashiers: 2</div>
                 </div>
               </CardContent>
@@ -419,16 +510,18 @@ export function AdvancedDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>System Alerts</CardTitle>
-              <CardDescription>Recent system notifications and alerts</CardDescription>
+              <CardDescription>
+                Recent system notifications and alerts
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {systemAlerts.map((alert) => (
                   <div
                     key={alert.id}
-                    className={`p-4 border rounded-lg ${getSeverityColor(alert.severity)} ${
-                      alert.resolved ? "opacity-60" : ""
-                    }`}
+                    className={`p-4 border rounded-lg ${getSeverityColor(
+                      alert.severity
+                    )} ${alert.resolved ? "opacity-60" : ""}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3">
@@ -440,14 +533,18 @@ export function AdvancedDashboard() {
                               {alert.severity.toUpperCase()}
                             </Badge>
                             {alert.resolved && (
-                              <Badge variant="default" className="text-xs bg-green-600">
+                              <Badge
+                                variant="default"
+                                className="text-xs bg-green-600"
+                              >
                                 Resolved
                               </Badge>
                             )}
                           </div>
                           <p className="text-sm mb-2">{alert.message}</p>
                           <div className="text-xs text-muted-foreground">
-                            {alert.branchName} • {alert.timestamp.toLocaleString()}
+                            {alert.branchName} •{" "}
+                            {alert.timestamp.toLocaleString()}
                           </div>
                         </div>
                       </div>
@@ -517,7 +614,9 @@ export function AdvancedDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Database Status</CardTitle>
-                <CardDescription>Database health and performance</CardDescription>
+                <CardDescription>
+                  Database health and performance
+                </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -555,7 +654,9 @@ export function AdvancedDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Active Sessions</CardTitle>
-              <CardDescription>Currently active user sessions across all branches</CardDescription>
+              <CardDescription>
+                Currently active user sessions across all branches
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -564,10 +665,14 @@ export function AdvancedDashboard() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <div>
                       <div className="font-medium">Admin User</div>
-                      <div className="text-sm text-muted-foreground">Cabang Utama • Admin Panel</div>
+                      <div className="text-sm text-muted-foreground">
+                        Cabang Utama • Admin Panel
+                      </div>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">Active for 2h 15m</div>
+                  <div className="text-sm text-muted-foreground">
+                    Active for 2h 15m
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -575,10 +680,14 @@ export function AdvancedDashboard() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <div>
                       <div className="font-medium">Kasir 1</div>
-                      <div className="text-sm text-muted-foreground">Cabang Utama • POS Terminal</div>
+                      <div className="text-sm text-muted-foreground">
+                        Cabang Utama • POS Terminal
+                      </div>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">Active for 45m</div>
+                  <div className="text-sm text-muted-foreground">
+                    Active for 45m
+                  </div>
                 </div>
 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
@@ -586,10 +695,14 @@ export function AdvancedDashboard() {
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
                     <div>
                       <div className="font-medium">Kasir 2</div>
-                      <div className="text-sm text-muted-foreground">Cabang Mall • POS Terminal</div>
+                      <div className="text-sm text-muted-foreground">
+                        Cabang Mall • POS Terminal
+                      </div>
                     </div>
                   </div>
-                  <div className="text-sm text-muted-foreground">Active for 1h 30m</div>
+                  <div className="text-sm text-muted-foreground">
+                    Active for 1h 30m
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -597,5 +710,5 @@ export function AdvancedDashboard() {
         </TabsContent>
       </Tabs>
     </div>
-  )
+  );
 }

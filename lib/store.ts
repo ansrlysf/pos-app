@@ -1,5 +1,5 @@
-import { create } from "zustand"
-import { persist } from "zustand/middleware"
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 // Permission Types
 export type Permission =
@@ -27,15 +27,15 @@ export type Permission =
   | "advanced_search"
   | "manage_branches"
   | "inter_branch_transfer"
-  | "central_reporting"
+  | "central_reporting";
 
 // Role Definitions
 export interface CashierRole {
-  id: string
-  name: string
-  description: string
-  permissions: Permission[]
-  color: string
+  id: string;
+  name: string;
+  description: string;
+  permissions: Permission[];
+  color: string;
 }
 
 export const CASHIER_ROLES: CashierRole[] = [
@@ -44,7 +44,12 @@ export const CASHIER_ROLES: CashierRole[] = [
     name: "Kasir Junior",
     description: "Operasi dasar kasir",
     color: "blue",
-    permissions: ["process_transaction", "access_customer_data", "view_transaction_history", "transaction_notes"],
+    permissions: [
+      "process_transaction",
+      "access_customer_data",
+      "view_transaction_history",
+      "transaction_notes",
+    ],
   },
   {
     id: "senior",
@@ -125,288 +130,302 @@ export const CASHIER_ROLES: CashierRole[] = [
       "central_reporting",
     ],
   },
-]
+];
 
 // Types
 export interface Product {
-  id: string
-  name: string
-  category: string
-  price: number
-  cost: number
-  stock: number
-  barcode: string
-  image?: string
-  isFavorite?: boolean
-  createdAt: Date
-  updatedAt: Date
+  id: string;
+  name: string;
+  category: string;
+  price: number;
+  cost: number;
+  stock: number;
+  barcode: string;
+  image?: string;
+  isFavorite?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CartItem {
-  product: Product
-  quantity: number
-  subtotal: number
+  product: Product;
+  quantity: number;
+  subtotal: number;
   discount?: {
-    type: "percentage" | "amount"
-    value: number
-    amount: number
-    reason?: string
-  }
+    type: "percentage" | "amount";
+    value: number;
+    amount: number;
+    reason?: string;
+  };
   priceOverride?: {
-    originalPrice: number
-    newPrice: number
-    reason: string
-  }
-  finalPrice: number
+    originalPrice: number;
+    newPrice: number;
+    reason: string;
+  };
+  finalPrice: number;
 }
 
 export interface Transaction {
-  id: string
-  items: CartItem[]
-  total: number
-  discount: number
-  tax: number
-  finalTotal: number
-  paymentMethod: "cash" | "card" | "digital"
-  cashReceived?: number
-  change?: number
-  createdAt: Date
-  cashierId: string
-  customerId?: string
-  customerName?: string
-  note?: string
-  pointsUsed?: number
-  status: "completed" | "voided" | "refunded"
-  voidReason?: string
-  refundAmount?: number
-  refundReason?: string
-  branchId?: string
+  id: string;
+  items: CartItem[];
+  total: number;
+  discount: number;
+  tax: number;
+  finalTotal: number;
+  paymentMethod: "cash" | "card" | "digital";
+  cashReceived?: number;
+  change?: number;
+  createdAt: Date;
+  cashierId: string;
+  customerId?: string;
+  customerName?: string;
+  note?: string;
+  pointsUsed?: number;
+  status: "completed" | "voided" | "refunded";
+  voidReason?: string;
+  refundAmount?: number;
+  refundReason?: string;
+  branchId?: string;
 }
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  role: "admin" | "cashier"
-  cashierRole?: string
-  permissions?: Permission[]
-  branchId?: string
-  createdAt: Date
+  id: string;
+  name: string;
+  email: string;
+  role: "admin" | "cashier";
+  cashierRole?: string;
+  permissions?: Permission[];
+  branchId?: string;
+  createdAt: Date;
 }
 
 export interface Customer {
-  id: string
-  name: string
-  email?: string
-  phone?: string
-  loyaltyPoints: number
-  creditBalance: number
-  totalSpent: number
-  visitCount: number
-  lastVisit: Date
-  segment: "new" | "regular" | "vip" | "inactive"
-  createdAt: Date
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  loyaltyPoints: number;
+  creditBalance: number;
+  totalSpent: number;
+  visitCount: number;
+  lastVisit: Date;
+  segment: "new" | "regular" | "vip" | "inactive";
+  createdAt: Date;
 }
 
 export interface Notification {
-  id: string
-  title: string
-  message: string
-  type: "info" | "success" | "warning" | "error"
-  read: boolean
-  createdAt: Date
+  id: string;
+  title: string;
+  message: string;
+  type: "info" | "success" | "warning" | "error";
+  read: boolean;
+  createdAt: Date;
 }
 
 export interface CashierSettings {
   // Stock Settings
-  validateStock: boolean
-  allowNegativeStock: boolean
-  lowStockWarning: boolean
-  lowStockThreshold: number
+  validateStock: boolean;
+  allowNegativeStock: boolean;
+  lowStockWarning: boolean;
+  lowStockThreshold: number;
 
   // Printer Settings
-  printerEnabled: boolean
-  printerName: string
-  paperSize: "58mm" | "80mm" | "A4"
-  printCopies: number
-  autoPrint: boolean
-  printLogo: boolean
-  printBarcode: boolean
+  printerEnabled: boolean;
+  printerName: string;
+  paperSize: "58mm" | "80mm" | "A4";
+  printCopies: number;
+  autoPrint: boolean;
+  printLogo: boolean;
+  printBarcode: boolean;
 
   // Location Settings
-  storeName: string
-  storeAddress: string
-  storePhone: string
-  cashRegisterName: string
-  cashierId: string
+  storeName: string;
+  storeAddress: string;
+  storePhone: string;
+  cashRegisterName: string;
+  cashierId: string;
 
   // Receipt Settings
-  receiptHeader: string
-  receiptFooter: string
-  showTax: boolean
-  showDiscount: boolean
-  showCustomerInfo: boolean
+  receiptHeader: string;
+  receiptFooter: string;
+  showTax: boolean;
+  showDiscount: boolean;
+  showCustomerInfo: boolean;
 
   // Discount Settings
-  allowItemDiscount: boolean
-  maxDiscountPercent: number
-  maxDiscountAmount: number
-  requireDiscountReason: boolean
+  allowItemDiscount: boolean;
+  maxDiscountPercent: number;
+  maxDiscountAmount: number;
+  requireDiscountReason: boolean;
 
   // Other Settings
-  soundEnabled: boolean
-  keyboardShortcuts: boolean
-  touchMode: boolean
-  language: "id" | "en"
+  soundEnabled: boolean;
+  keyboardShortcuts: boolean;
+  touchMode: boolean;
+  language: "id" | "en";
 
   // New Settings
-  allowPriceOverride: boolean
-  maxPriceOverridePercent: number
-  requireOverrideReason: boolean
-  enableCustomerCredit: boolean
-  autoBackup: boolean
-  backupInterval: number
+  allowPriceOverride: boolean;
+  maxPriceOverridePercent: number;
+  requireOverrideReason: boolean;
+  enableCustomerCredit: boolean;
+  autoBackup: boolean;
+  backupInterval: number;
 }
 
 export interface ShiftSummary {
-  id: string
-  cashierId: string
-  cashierName: string
-  startTime: Date
-  endTime?: Date
-  startingCash: number
-  endingCash?: number
-  totalSales: number
-  totalTransactions: number
-  cashSales: number
-  cardSales: number
-  digitalSales: number
-  totalDiscount: number
-  totalTax: number
-  expectedCash: number
-  actualCash?: number
-  cashDifference?: number
-  status: "active" | "closed"
-  transactions: string[]
-  notes?: string
-  voidedTransactions: number
-  refundedAmount: number
-  branchId?: string
+  id: string;
+  cashierId: string;
+  cashierName: string;
+  startTime: Date;
+  endTime?: Date;
+  startingCash: number;
+  endingCash?: number;
+  totalSales: number;
+  totalTransactions: number;
+  cashSales: number;
+  cardSales: number;
+  digitalSales: number;
+  totalDiscount: number;
+  totalTax: number;
+  expectedCash: number;
+  actualCash?: number;
+  cashDifference?: number;
+  status: "active" | "closed";
+  transactions: string[];
+  notes?: string;
+  voidedTransactions: number;
+  refundedAmount: number;
+  branchId?: string;
 }
 
 export interface AuditLog {
-  id: string
-  userId: string
-  userName: string
-  action: string
-  details: string
-  timestamp: Date
-  ipAddress?: string
-  userAgent?: string
-  branchId?: string
+  id: string;
+  userId: string;
+  userName: string;
+  action: string;
+  details: string;
+  timestamp: Date;
+  ipAddress?: string;
+  userAgent?: string;
+  branchId?: string;
 }
 
 export interface ProductFavorite {
-  productId: string
-  userId: string
-  createdAt: Date
+  productId: string;
+  userId: string;
+  createdAt: Date;
 }
 
 // Add branches to the main store
 export interface Branch {
-  id: string
-  name: string
-  address: string
-  phone: string
-  email: string
-  status: "active" | "inactive" | "maintenance"
+  id: string;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  status: "active" | "inactive" | "maintenance";
 }
 
 interface AppState {
   // Auth
-  currentUser: User | null
-  isAuthenticated: boolean
+  currentUser: User | null;
+  isAuthenticated: boolean;
 
   // Products
-  products: Product[]
-  categories: string[]
-  productFavorites: ProductFavorite[]
+  products: Product[];
+  categories: string[];
+  productFavorites: ProductFavorite[];
 
   // Cart
-  cart: CartItem[]
+  cart: CartItem[];
 
   // Transactions
-  transactions: Transaction[]
+  transactions: Transaction[];
 
   // Customers
-  customers: Customer[]
+  customers: Customer[];
 
   // Branches
-  branches: Branch[]
+  branches: Branch[];
 
   // Cashier Settings
-  cashierSettings: CashierSettings
+  cashierSettings: CashierSettings;
 
   // Shift Management
-  currentShift: ShiftSummary | null
-  shifts: ShiftSummary[]
+  currentShift: ShiftSummary | null;
+  shifts: ShiftSummary[];
 
   // Audit Logs
-  auditLogs: AuditLog[]
+  auditLogs: AuditLog[];
 
   // UI
-  isDarkMode: boolean
+  isDarkMode: boolean;
 
   // Notifications
-  notifications: Notification[]
+  notifications: Notification[];
 
   // Actions
-  login: (user: User) => void
-  logout: () => void
-  hasPermission: (permission: Permission) => boolean
-  addAuditLog: (action: string, details: string) => void
+  login: (user: User) => void;
+  logout: () => void;
+  hasPermission: (permission: Permission) => boolean;
+  addAuditLog: (action: string, details: string) => void;
 
   // Product actions
-  addProduct: (product: Omit<Product, "id" | "createdAt" | "updatedAt">) => void
-  updateProduct: (id: string, product: Partial<Product>) => void
-  deleteProduct: (id: string) => void
-  toggleProductFavorite: (productId: string) => void
+  addProduct: (
+    product: Omit<Product, "id" | "createdAt" | "updatedAt">
+  ) => void;
+  updateProduct: (id: string, product: Partial<Product>) => void;
+  deleteProduct: (id: string) => void;
+  toggleProductFavorite: (productId: string) => void;
 
   // Cart actions
-  addToCart: (product: Product, quantity: number) => void
+  addToCart: (product: Product, quantity: number) => void;
   updateCartItem: (
     productId: string,
     quantity: number,
     discount?: CartItem["discount"],
-    priceOverride?: CartItem["priceOverride"],
-  ) => void
-  removeFromCart: (productId: string) => void
-  clearCart: () => void
+    priceOverride?: CartItem["priceOverride"]
+  ) => void;
+  removeFromCart: (productId: string) => void;
+  clearCart: () => void;
 
   // Transaction actions
-  processTransaction: (transaction: Omit<Transaction, "id" | "createdAt">) => void
-  voidTransaction: (transactionId: string, reason: string) => void
-  processRefund: (transactionId: string, amount: number, reason: string) => void
+  processTransaction: (
+    transaction: Omit<Transaction, "id" | "createdAt">
+  ) => void;
+  voidTransaction: (transactionId: string, reason: string) => void;
+  processRefund: (
+    transactionId: string,
+    amount: number,
+    reason: string
+  ) => void;
 
   // Customer actions
-  addCustomer: (customer: Omit<Customer, "id" | "createdAt">) => void
-  updateCustomer: (id: string, customer: Partial<Customer>) => void
-  addCustomerCredit: (customerId: string, amount: number, reason: string) => void
-  useCustomerCredit: (customerId: string, amount: number) => void
+  addCustomer: (customer: Omit<Customer, "id" | "createdAt">) => void;
+  updateCustomer: (id: string, customer: Partial<Customer>) => void;
+  addCustomerCredit: (
+    customerId: string,
+    amount: number,
+    reason: string
+  ) => void;
+  useCustomerCredit: (customerId: string, amount: number) => void;
 
   // Cashier Settings
-  updateCashierSettings: (settings: Partial<CashierSettings>) => void
+  updateCashierSettings: (settings: Partial<CashierSettings>) => void;
 
   // Shift Management
-  startShift: (startingCash: number) => void
-  endShift: (endingCash: number, notes?: string) => void
+  startShift: (startingCash: number) => void;
+  endShift: (endingCash: number, notes?: string) => void;
 
-  toggleDarkMode: () => void
+  toggleDarkMode: () => void;
 
   // Notification actions
-  addNotification: (notification: Omit<Notification, "id" | "createdAt" | "read">) => void
-  markNotificationRead: (id: string) => void
-  clearNotifications: () => void
+  addNotification: (
+    notification: Omit<Notification, "id" | "createdAt" | "read">
+  ) => void;
+  markNotificationRead: (id: string) => void;
+  clearNotifications: () => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -454,7 +473,9 @@ export const useAppStore = create<AppState>()(
         },
       ],
       categories: ["Food", "Beverages", "Snacks", "Personal Care"],
-      productFavorites: [{ productId: "2", userId: "cashier1", createdAt: new Date() }],
+      productFavorites: [
+        { productId: "2", userId: "cashier1", createdAt: new Date() },
+      ],
       cart: [],
       transactions: [],
       customers: [
@@ -605,37 +626,39 @@ export const useAppStore = create<AppState>()(
 
       // Actions
       login: (user) => {
-        set({ currentUser: user, isAuthenticated: true })
-        get().addAuditLog("LOGIN", `User ${user.name} logged in`)
+        set({ currentUser: user, isAuthenticated: true });
+        get().addAuditLog("LOGIN", `User ${user.name} logged in`);
       },
 
       logout: () => {
-        const { currentUser } = get()
+        const { currentUser } = get();
         if (currentUser) {
-          get().addAuditLog("LOGOUT", `User ${currentUser.name} logged out`)
+          get().addAuditLog("LOGOUT", `User ${currentUser.name} logged out`);
         }
-        set({ currentUser: null, isAuthenticated: false })
+        set({ currentUser: null, isAuthenticated: false });
       },
 
       hasPermission: (permission) => {
-        const { currentUser } = get()
-        if (!currentUser) return false
+        const { currentUser } = get();
+        if (!currentUser) return false;
 
-        if (currentUser.role === "admin") return true
+        if (currentUser.role === "admin") return true;
 
-        if (currentUser.permissions?.includes(permission)) return true
+        if (currentUser.permissions?.includes(permission)) return true;
 
         if (currentUser.cashierRole) {
-          const role = CASHIER_ROLES.find((r) => r.id === currentUser.cashierRole)
-          return role?.permissions.includes(permission) || false
+          const role = CASHIER_ROLES.find(
+            (r) => r.id === currentUser.cashierRole
+          );
+          return role?.permissions.includes(permission) || false;
         }
 
-        return false
+        return true;
       },
 
       addAuditLog: (action, details) => {
-        const { currentUser } = get()
-        if (!currentUser) return
+        const { currentUser } = get();
+        if (!currentUser) return;
 
         const newLog: AuditLog = {
           id: Date.now().toString(),
@@ -645,11 +668,11 @@ export const useAppStore = create<AppState>()(
           details,
           timestamp: new Date(),
           branchId: currentUser.branchId,
-        }
+        };
 
         set((state) => ({
           auditLogs: [newLog, ...state.auditLogs].slice(0, 1000), // Keep last 1000 logs
-        }))
+        }));
       },
 
       addProduct: (productData) => {
@@ -658,8 +681,8 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk menambah produk",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
         const newProduct: Product = {
@@ -668,9 +691,9 @@ export const useAppStore = create<AppState>()(
           isFavorite: false,
           createdAt: new Date(),
           updatedAt: new Date(),
-        }
-        set((state) => ({ products: [...state.products, newProduct] }))
-        get().addAuditLog("ADD_PRODUCT", `Added product: ${newProduct.name}`)
+        };
+        set((state) => ({ products: [...state.products, newProduct] }));
+        get().addAuditLog("ADD_PRODUCT", `Added product: ${newProduct.name}`);
       },
 
       updateProduct: (id, productData) => {
@@ -679,14 +702,16 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk mengubah produk",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
         set((state) => ({
-          products: state.products.map((p) => (p.id === id ? { ...p, ...productData, updatedAt: new Date() } : p)),
-        }))
-        get().addAuditLog("UPDATE_PRODUCT", `Updated product ID: ${id}`)
+          products: state.products.map((p) =>
+            p.id === id ? { ...p, ...productData, updatedAt: new Date() } : p
+          ),
+        }));
+        get().addAuditLog("UPDATE_PRODUCT", `Updated product ID: ${id}`);
       },
 
       deleteProduct: (id) => {
@@ -695,46 +720,53 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk menghapus produk",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
-        const product = get().products.find((p) => p.id === id)
+        const product = get().products.find((p) => p.id === id);
         set((state) => ({
           products: state.products.filter((p) => p.id !== id),
-        }))
-        get().addAuditLog("DELETE_PRODUCT", `Deleted product: ${product?.name || id}`)
+        }));
+        get().addAuditLog(
+          "DELETE_PRODUCT",
+          `Deleted product: ${product?.name || id}`
+        );
       },
 
       toggleProductFavorite: (productId) => {
-        if (!get().hasPermission("product_favorites")) return
+        if (!get().hasPermission("product_favorites")) return;
 
-        const { currentUser, productFavorites } = get()
-        if (!currentUser) return
+        const { currentUser, productFavorites } = get();
+        if (!currentUser) return;
 
-        const existingFavorite = productFavorites.find((f) => f.productId === productId && f.userId === currentUser.id)
+        const existingFavorite = productFavorites.find(
+          (f) => f.productId === productId && f.userId === currentUser.id
+        );
 
         if (existingFavorite) {
           set((state) => ({
             productFavorites: state.productFavorites.filter(
-              (f) => !(f.productId === productId && f.userId === currentUser.id),
+              (f) => !(f.productId === productId && f.userId === currentUser.id)
             ),
-          }))
+          }));
         } else {
           const newFavorite: ProductFavorite = {
             productId,
             userId: currentUser.id,
             createdAt: new Date(),
-          }
+          };
           set((state) => ({
             productFavorites: [...state.productFavorites, newFavorite],
-          }))
+          }));
         }
 
         // Update product favorite status
         set((state) => ({
-          products: state.products.map((p) => (p.id === productId ? { ...p, isFavorite: !existingFavorite } : p)),
-        }))
+          products: state.products.map((p) =>
+            p.id === productId ? { ...p, isFavorite: !existingFavorite } : p
+          ),
+        }));
       },
 
       addToCart: (product, quantity) => {
@@ -743,31 +775,38 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk memproses transaksi",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
-        const { cashierSettings } = get()
+        const { cashierSettings } = get();
 
         // Validate stock if enabled
-        if (cashierSettings.validateStock && !cashierSettings.allowNegativeStock) {
+        if (
+          cashierSettings.validateStock &&
+          !cashierSettings.allowNegativeStock
+        ) {
           if (product.stock < quantity) {
             get().addNotification({
               title: "Stok tidak cukup",
               message: `Stok ${product.name} hanya tersisa ${product.stock}`,
               type: "warning",
-            })
-            return
+            });
+            return;
           }
         }
 
         set((state) => {
-          const existingItem = state.cart.find((item) => item.product.id === product.id)
+          const existingItem = state.cart.find(
+            (item) => item.product.id === product.id
+          );
           if (existingItem) {
-            const newQuantity = existingItem.quantity + quantity
-            const subtotal = newQuantity * (existingItem.priceOverride?.newPrice || product.price)
-            const discountAmount = existingItem.discount?.amount || 0
-            const finalPrice = subtotal - discountAmount
+            const newQuantity = existingItem.quantity + quantity;
+            const subtotal =
+              newQuantity *
+              (existingItem.priceOverride?.newPrice || product.price);
+            const discountAmount = existingItem.discount?.amount || 0;
+            const finalPrice = subtotal - discountAmount;
 
             return {
               cart: state.cart.map((item) =>
@@ -778,11 +817,11 @@ export const useAppStore = create<AppState>()(
                       subtotal,
                       finalPrice,
                     }
-                  : item,
+                  : item
               ),
-            }
+            };
           } else {
-            const subtotal = quantity * product.price
+            const subtotal = quantity * product.price;
             return {
               cart: [
                 ...state.cart,
@@ -793,24 +832,27 @@ export const useAppStore = create<AppState>()(
                   finalPrice: subtotal,
                 },
               ],
-            }
+            };
           }
-        })
+        });
       },
 
       updateCartItem: (productId, quantity, discount, priceOverride) => {
         if (quantity <= 0) {
-          get().removeFromCart(productId)
-          return
+          get().removeFromCart(productId);
+          return;
         }
 
         set((state) => ({
           cart: state.cart.map((item) => {
             if (item.product.id === productId) {
-              const basePrice = priceOverride?.newPrice || item.priceOverride?.newPrice || item.product.price
-              const subtotal = quantity * basePrice
-              const discountAmount = discount?.amount || 0
-              const finalPrice = subtotal - discountAmount
+              const basePrice =
+                priceOverride?.newPrice ||
+                item.priceOverride?.newPrice ||
+                item.product.price;
+              const subtotal = quantity * basePrice;
+              const discountAmount = discount?.amount || 0;
+              const finalPrice = subtotal - discountAmount;
 
               return {
                 ...item,
@@ -819,17 +861,17 @@ export const useAppStore = create<AppState>()(
                 discount,
                 priceOverride,
                 finalPrice,
-              }
+              };
             }
-            return item
+            return item;
           }),
-        }))
+        }));
       },
 
       removeFromCart: (productId) => {
         set((state) => ({
           cart: state.cart.filter((item) => item.product.id !== productId),
-        }))
+        }));
       },
 
       clearCart: () => set({ cart: [] }),
@@ -840,26 +882,26 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk memproses transaksi",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
-        const { currentUser } = get()
+        const { currentUser } = get();
         const newTransaction: Transaction = {
           ...transactionData,
           id: Date.now().toString(),
           status: "completed",
           createdAt: new Date(),
           branchId: currentUser?.branchId,
-        }
+        };
 
         set((state) => ({
           transactions: [...state.transactions, newTransaction],
           cart: [], // Clear cart after transaction
-        }))
+        }));
 
         // Update current shift
-        const { currentShift } = get()
+        const { currentShift } = get();
         if (currentShift) {
           set((state) => ({
             currentShift: {
@@ -867,32 +909,46 @@ export const useAppStore = create<AppState>()(
               totalSales: currentShift.totalSales + transactionData.finalTotal,
               totalTransactions: currentShift.totalTransactions + 1,
               cashSales:
-                currentShift.cashSales + (transactionData.paymentMethod === "cash" ? transactionData.finalTotal : 0),
+                currentShift.cashSales +
+                (transactionData.paymentMethod === "cash"
+                  ? transactionData.finalTotal
+                  : 0),
               cardSales:
-                currentShift.cardSales + (transactionData.paymentMethod === "card" ? transactionData.finalTotal : 0),
+                currentShift.cardSales +
+                (transactionData.paymentMethod === "card"
+                  ? transactionData.finalTotal
+                  : 0),
               digitalSales:
                 currentShift.digitalSales +
-                (transactionData.paymentMethod === "digital" ? transactionData.finalTotal : 0),
-              totalDiscount: currentShift.totalDiscount + transactionData.discount,
+                (transactionData.paymentMethod === "digital"
+                  ? transactionData.finalTotal
+                  : 0),
+              totalDiscount:
+                currentShift.totalDiscount + transactionData.discount,
               totalTax: currentShift.totalTax + transactionData.tax,
               expectedCash:
-                currentShift.expectedCash + (transactionData.paymentMethod === "cash" ? transactionData.finalTotal : 0),
+                currentShift.expectedCash +
+                (transactionData.paymentMethod === "cash"
+                  ? transactionData.finalTotal
+                  : 0),
               transactions: [...currentShift.transactions, newTransaction.id],
             },
-          }))
+          }));
         }
 
         // Update product stock
         transactionData.items.forEach((item) => {
           get().updateProduct(item.product.id, {
             stock: item.product.stock - item.quantity,
-          })
-        })
+          });
+        });
 
         get().addAuditLog(
           "PROCESS_TRANSACTION",
-          `Processed transaction ${newTransaction.id} - Total: Rp ${transactionData.finalTotal.toLocaleString("id-ID")}`,
-        )
+          `Processed transaction ${
+            newTransaction.id
+          } - Total: Rp ${transactionData.finalTotal.toLocaleString("id-ID")}`
+        );
       },
 
       voidTransaction: (transactionId, reason) => {
@@ -901,28 +957,33 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk membatalkan transaksi",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
         set((state) => ({
           transactions: state.transactions.map((t) =>
-            t.id === transactionId ? { ...t, status: "voided", voidReason: reason } : t,
+            t.id === transactionId
+              ? { ...t, status: "voided", voidReason: reason }
+              : t
           ),
-        }))
+        }));
 
         // Update shift statistics
-        const { currentShift } = get()
+        const { currentShift } = get();
         if (currentShift) {
           set((state) => ({
             currentShift: {
               ...currentShift,
               voidedTransactions: currentShift.voidedTransactions + 1,
             },
-          }))
+          }));
         }
 
-        get().addAuditLog("VOID_TRANSACTION", `Voided transaction ${transactionId} - Reason: ${reason}`)
+        get().addAuditLog(
+          "VOID_TRANSACTION",
+          `Voided transaction ${transactionId} - Reason: ${reason}`
+        );
       },
 
       processRefund: (transactionId, amount, reason) => {
@@ -931,31 +992,40 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk memproses refund",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
         set((state) => ({
           transactions: state.transactions.map((t) =>
-            t.id === transactionId ? { ...t, status: "refunded", refundAmount: amount, refundReason: reason } : t,
+            t.id === transactionId
+              ? {
+                  ...t,
+                  status: "refunded",
+                  refundAmount: amount,
+                  refundReason: reason,
+                }
+              : t
           ),
-        }))
+        }));
 
         // Update shift statistics
-        const { currentShift } = get()
+        const { currentShift } = get();
         if (currentShift) {
           set((state) => ({
             currentShift: {
               ...currentShift,
               refundedAmount: currentShift.refundedAmount + amount,
             },
-          }))
+          }));
         }
 
         get().addAuditLog(
           "PROCESS_REFUND",
-          `Processed refund for transaction ${transactionId} - Amount: Rp ${amount.toLocaleString("id-ID")} - Reason: ${reason}`,
-        )
+          `Processed refund for transaction ${transactionId} - Amount: Rp ${amount.toLocaleString(
+            "id-ID"
+          )} - Reason: ${reason}`
+        );
       },
 
       addCustomer: (customerData) => {
@@ -964,8 +1034,8 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk menambah customer",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
         const newCustomer: Customer = {
@@ -973,9 +1043,12 @@ export const useAppStore = create<AppState>()(
           id: Date.now().toString(),
           creditBalance: 0,
           createdAt: new Date(),
-        }
-        set((state) => ({ customers: [...state.customers, newCustomer] }))
-        get().addAuditLog("ADD_CUSTOMER", `Added customer: ${newCustomer.name}`)
+        };
+        set((state) => ({ customers: [...state.customers, newCustomer] }));
+        get().addAuditLog(
+          "ADD_CUSTOMER",
+          `Added customer: ${newCustomer.name}`
+        );
       },
 
       updateCustomer: (id, customerData) => {
@@ -984,14 +1057,16 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk mengubah customer",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
         set((state) => ({
-          customers: state.customers.map((c) => (c.id === id ? { ...c, ...customerData } : c)),
-        }))
-        get().addAuditLog("UPDATE_CUSTOMER", `Updated customer ID: ${id}`)
+          customers: state.customers.map((c) =>
+            c.id === id ? { ...c, ...customerData } : c
+          ),
+        }));
+        get().addAuditLog("UPDATE_CUSTOMER", `Updated customer ID: ${id}`);
       },
 
       addCustomerCredit: (customerId, amount, reason) => {
@@ -1000,34 +1075,38 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk mengelola kredit customer",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
-        const customer = get().customers.find((c) => c.id === customerId)
+        const customer = get().customers.find((c) => c.id === customerId);
         if (customer) {
           get().updateCustomer(customerId, {
             creditBalance: customer.creditBalance + amount,
-          })
+          });
           get().addAuditLog(
             "ADD_CUSTOMER_CREDIT",
-            `Added credit Rp ${amount.toLocaleString("id-ID")} to ${customer.name} - Reason: ${reason}`,
-          )
+            `Added credit Rp ${amount.toLocaleString("id-ID")} to ${
+              customer.name
+            } - Reason: ${reason}`
+          );
         }
       },
 
       useCustomerCredit: (customerId, amount) => {
-        if (!get().hasPermission("customer_credit")) return
+        if (!get().hasPermission("customer_credit")) return;
 
-        const customer = get().customers.find((c) => c.id === customerId)
+        const customer = get().customers.find((c) => c.id === customerId);
         if (customer && customer.creditBalance >= amount) {
           get().updateCustomer(customerId, {
             creditBalance: customer.creditBalance - amount,
-          })
+          });
           get().addAuditLog(
             "USE_CUSTOMER_CREDIT",
-            `Used credit Rp ${amount.toLocaleString("id-ID")} from ${customer.name}`,
-          )
+            `Used credit Rp ${amount.toLocaleString("id-ID")} from ${
+              customer.name
+            }`
+          );
         }
       },
 
@@ -1037,14 +1116,14 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk mengubah pengaturan",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
         set((state) => ({
           cashierSettings: { ...state.cashierSettings, ...settings },
-        }))
-        get().addAuditLog("UPDATE_SETTINGS", "Updated cashier settings")
+        }));
+        get().addAuditLog("UPDATE_SETTINGS", "Updated cashier settings");
       },
 
       startShift: (startingCash) => {
@@ -1053,12 +1132,12 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk mengelola shift",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
-        const { currentUser } = get()
-        if (!currentUser) return
+        const { currentUser } = get();
+        if (!currentUser) return;
 
         const newShift: ShiftSummary = {
           id: Date.now().toString(),
@@ -1079,10 +1158,13 @@ export const useAppStore = create<AppState>()(
           voidedTransactions: 0,
           refundedAmount: 0,
           branchId: currentUser.branchId,
-        }
+        };
 
-        set({ currentShift: newShift })
-        get().addAuditLog("START_SHIFT", `Started shift with cash: Rp ${startingCash.toLocaleString("id-ID")}`)
+        set({ currentShift: newShift });
+        get().addAuditLog(
+          "START_SHIFT",
+          `Started shift with cash: Rp ${startingCash.toLocaleString("id-ID")}`
+        );
       },
 
       endShift: (endingCash, notes) => {
@@ -1091,12 +1173,12 @@ export const useAppStore = create<AppState>()(
             title: "Akses ditolak",
             message: "Anda tidak memiliki izin untuk mengelola shift",
             type: "error",
-          })
-          return
+          });
+          return;
         }
 
-        const { currentShift } = get()
-        if (!currentShift) return
+        const { currentShift } = get();
+        if (!currentShift) return;
 
         const closedShift: ShiftSummary = {
           ...currentShift,
@@ -1106,17 +1188,19 @@ export const useAppStore = create<AppState>()(
           cashDifference: endingCash - currentShift.expectedCash,
           status: "closed",
           notes,
-        }
+        };
 
         set((state) => ({
           shifts: [...state.shifts, closedShift],
           currentShift: null,
-        }))
+        }));
 
         get().addAuditLog(
           "END_SHIFT",
-          `Ended shift - Cash difference: Rp ${closedShift.cashDifference?.toLocaleString("id-ID") || "0"}`,
-        )
+          `Ended shift - Cash difference: Rp ${
+            closedShift.cashDifference?.toLocaleString("id-ID") || "0"
+          }`
+        );
       },
 
       toggleDarkMode: () => set((state) => ({ isDarkMode: !state.isDarkMode })),
@@ -1127,22 +1211,24 @@ export const useAppStore = create<AppState>()(
           id: Date.now().toString(),
           read: false,
           createdAt: new Date(),
-        }
+        };
         set((state) => ({
           notifications: [newNotification, ...state.notifications].slice(0, 50), // Keep only last 50 notifications
-        }))
+        }));
       },
 
       markNotificationRead: (id) => {
         set((state) => ({
-          notifications: state.notifications.map((n) => (n.id === id ? { ...n, read: true } : n)),
-        }))
+          notifications: state.notifications.map((n) =>
+            n.id === id ? { ...n, read: true } : n
+          ),
+        }));
       },
 
       clearNotifications: () => set({ notifications: [] }),
     }),
     {
       name: "pos-storage",
-    },
-  ),
-)
+    }
+  )
+);

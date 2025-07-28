@@ -1,100 +1,125 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
-import { useAppStore } from "@/lib/store"
-import { PriceOverrideDialog } from "./price-override-dialog"
-import { Minus, Plus, Trash2, Percent, DollarSign, Edit } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { useAppStore } from "@/lib/store";
+import { PriceOverrideDialog } from "./price-override-dialog";
+import { Minus, Plus, Trash2, Percent, DollarSign, Edit } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { PaymentDialog } from "./payment-dialog";
 
 interface CartProps {
-  className?: string
+  className?: string;
 }
 
 export function Cart({ className }: CartProps) {
-  const { cart, updateCartItem, removeFromCart, clearCart, hasPermission, cashierSettings } = useAppStore()
-  const [overrideDialogOpen, setOverrideDialogOpen] = useState(false)
-  const [selectedProductId, setSelectedProductId] = useState("")
-  const { toast } = useToast()
+  const {
+    cart,
+    updateCartItem,
+    removeFromCart,
+    clearCart,
+    hasPermission,
+    cashierSettings,
+  } = useAppStore();
+  const [overrideDialogOpen, setOverrideDialogOpen] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState("");
+  const { toast } = useToast();
+  const [discount, setDiscount] = useState(0);
 
-  const subtotal = cart.reduce((sum, item) => sum + item.subtotal, 0)
-  const totalDiscount = cart.reduce((sum, item) => sum + (item.discount?.amount || 0), 0)
-  const total = cart.reduce((sum, item) => sum + item.finalPrice, 0)
-  const tax = total * 0.1 // 10% tax
-  const finalTotal = total + tax
+  const subtotal = cart.reduce((sum, item) => sum + item.subtotal, 0);
+  const totalDiscount = cart.reduce(
+    (sum, item) => sum + (item.discount?.amount || 0),
+    0
+  );
+  const total = cart.reduce((sum, item) => sum + item.finalPrice, 0);
+  const tax = total * 0.1; // 10% tax
+  const finalTotal = total + tax;
+  const discountAmount = subtotal * (discount / 100);
 
   const handleQuantityChange = (productId: string, newQuantity: number) => {
-    const item = cart.find((item) => item.product.id === productId)
+    const item = cart.find((item) => item.product.id === productId);
     if (item) {
-      updateCartItem(productId, newQuantity, item.discount, item.priceOverride)
+      updateCartItem(productId, newQuantity, item.discount, item.priceOverride);
     }
-  }
+  };
 
-  const handleDiscount = (productId: string, type: "percentage" | "amount", value: number) => {
+  const handleDiscount = (
+    productId: string,
+    type: "percentage" | "amount",
+    value: number
+  ) => {
     if (!hasPermission("apply_item_discount")) {
       toast({
         title: "Akses ditolak",
         message: "Anda tidak memiliki izin untuk memberikan diskon",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
 
-    const item = cart.find((item) => item.product.id === productId)
-    if (!item) return
+    const item = cart.find((item) => item.product.id === productId);
+    if (!item) return;
 
-    let discountAmount = 0
+    let discountAmount = 0;
     if (type === "percentage") {
       if (value > cashierSettings.maxDiscountPercent) {
         toast({
           title: "Diskon melebihi batas",
           description: `Diskon maksimal ${cashierSettings.maxDiscountPercent}%`,
           variant: "destructive",
-        })
-        return
+        });
+        return;
       }
-      discountAmount = (item.subtotal * value) / 100
+      discountAmount = (item.subtotal * value) / 100;
     } else {
       if (value > cashierSettings.maxDiscountAmount) {
         toast({
           title: "Diskon melebihi batas",
-          description: `Diskon maksimal Rp ${cashierSettings.maxDiscountAmount.toLocaleString("id-ID")}`,
+          description: `Diskon maksimal Rp ${cashierSettings.maxDiscountAmount.toLocaleString(
+            "id-ID"
+          )}`,
           variant: "destructive",
-        })
-        return
+        });
+        return;
       }
-      discountAmount = value
+      discountAmount = value;
     }
 
     const discount = {
       type,
       value,
       amount: discountAmount,
-    }
+    };
 
-    updateCartItem(productId, item.quantity, discount, item.priceOverride)
-  }
+    updateCartItem(productId, item.quantity, discount, item.priceOverride);
+  };
 
-  const handlePriceOverride = (productId: string, newPrice: number, reason: string) => {
-    const item = cart.find((item) => item.product.id === productId)
-    if (!item) return
+  const handlePriceOverride = (
+    productId: string,
+    newPrice: number,
+    reason: string
+  ) => {
+    const item = cart.find((item) => item.product.id === productId);
+    if (!item) return;
 
     const priceOverride = {
       originalPrice: item.product.price,
       newPrice,
       reason,
-    }
+    };
 
-    updateCartItem(productId, item.quantity, item.discount, priceOverride)
+    updateCartItem(productId, item.quantity, item.discount, priceOverride);
     toast({
       title: "Harga berhasil diubah",
-      description: `Harga ${item.product.name} diubah menjadi Rp ${newPrice.toLocaleString("id-ID")}`,
-    })
-  }
+      description: `Harga ${
+        item.product.name
+      } diubah menjadi Rp ${newPrice.toLocaleString("id-ID")}`,
+    });
+  };
 
   const openPriceOverride = (productId: string) => {
     if (!hasPermission("override_price")) {
@@ -102,12 +127,24 @@ export function Cart({ className }: CartProps) {
         title: "Akses ditolak",
         message: "Anda tidak memiliki izin untuk mengubah harga",
         variant: "destructive",
-      })
-      return
+      });
+      return;
     }
-    setSelectedProductId(productId)
-    setOverrideDialogOpen(true)
-  }
+    setSelectedProductId(productId);
+    setOverrideDialogOpen(true);
+  };
+
+  const handleCheckout = () => {
+    if (cart.length === 0) {
+      toast({
+        title: "Keranjang kosong",
+        description: "Tambahkan produk terlebih dahulu",
+        variant: "destructive",
+      });
+      return;
+    }
+    setPaymentDialogOpen(true);
+  };
 
   if (cart.length === 0) {
     return (
@@ -122,8 +159,9 @@ export function Cart({ className }: CartProps) {
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
+  const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
 
   return (
     <>
@@ -137,7 +175,10 @@ export function Cart({ className }: CartProps) {
         <CardContent className="space-y-4">
           <div className="space-y-3 max-h-96 overflow-y-auto">
             {cart.map((item) => (
-              <div key={item.product.id} className="space-y-2 p-3 border rounded-lg">
+              <div
+                key={item.product.id}
+                className="space-y-2 p-3 border rounded-lg"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <h4 className="font-medium text-sm">{item.product.name}</h4>
@@ -145,10 +186,16 @@ export function Cart({ className }: CartProps) {
                       {item.priceOverride ? (
                         <div className="flex items-center gap-2">
                           <span className="text-xs line-through text-muted-foreground">
-                            Rp {item.priceOverride.originalPrice.toLocaleString("id-ID")}
+                            Rp{" "}
+                            {item.priceOverride.originalPrice.toLocaleString(
+                              "id-ID"
+                            )}
                           </span>
                           <span className="text-sm font-medium text-blue-600">
-                            Rp {item.priceOverride.newPrice.toLocaleString("id-ID")}
+                            Rp{" "}
+                            {item.priceOverride.newPrice.toLocaleString(
+                              "id-ID"
+                            )}
                           </span>
                           <Badge variant="outline" className="text-xs">
                             Override
@@ -176,7 +223,9 @@ export function Cart({ className }: CartProps) {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleQuantityChange(item.product.id, item.quantity - 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.product.id, item.quantity - 1)
+                      }
                       disabled={item.quantity <= 1}
                     >
                       <Minus className="h-3 w-3" />
@@ -184,26 +233,37 @@ export function Cart({ className }: CartProps) {
                     <Input
                       type="number"
                       value={item.quantity}
-                      onChange={(e) => handleQuantityChange(item.product.id, Number.parseInt(e.target.value) || 1)}
+                      onChange={(e) =>
+                        handleQuantityChange(
+                          item.product.id,
+                          Number.parseInt(e.target.value) || 1
+                        )
+                      }
                       className="w-16 text-center"
                       min="1"
                     />
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => handleQuantityChange(item.product.id, item.quantity + 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.product.id, item.quantity + 1)
+                      }
                     >
                       <Plus className="h-3 w-3" />
                     </Button>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">Rp {item.finalPrice.toLocaleString("id-ID")}</div>
+                    <div className="font-medium">
+                      Rp {item.finalPrice.toLocaleString("id-ID")}
+                    </div>
                     {item.discount && (
                       <div className="text-xs text-red-600">
                         -
                         {item.discount.type === "percentage"
                           ? `${item.discount.value}%`
-                          : `Rp ${item.discount.amount.toLocaleString("id-ID")}`}
+                          : `Rp ${item.discount.amount.toLocaleString(
+                              "id-ID"
+                            )}`}
                       </div>
                     )}
                   </div>
@@ -215,7 +275,9 @@ export function Cart({ className }: CartProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDiscount(item.product.id, "percentage", 10)}
+                        onClick={() =>
+                          handleDiscount(item.product.id, "percentage", 10)
+                        }
                         className="text-xs"
                       >
                         <Percent className="h-3 w-3 mr-1" />
@@ -224,7 +286,9 @@ export function Cart({ className }: CartProps) {
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => handleDiscount(item.product.id, "amount", 5000)}
+                        onClick={() =>
+                          handleDiscount(item.product.id, "amount", 5000)
+                        }
                         className="text-xs"
                       >
                         <DollarSign className="h-3 w-3 mr-1" />
@@ -270,6 +334,19 @@ export function Cart({ className }: CartProps) {
               <span>Total:</span>
               <span>Rp {finalTotal.toLocaleString("id-ID")}</span>
             </div>
+            {/* Actions */}
+            <div className="space-y-2">
+              <Button className="w-full" size="lg" onClick={handleCheckout}>
+                Bayar Sekarang
+              </Button>
+              <Button
+                variant="outline"
+                className="w-full bg-transparent"
+                onClick={clearCart}
+              >
+                Kosongkan Keranjang
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -278,9 +355,21 @@ export function Cart({ className }: CartProps) {
         open={overrideDialogOpen}
         onOpenChange={setOverrideDialogOpen}
         productId={selectedProductId}
-        currentPrice={cart.find((item) => item.product.id === selectedProductId)?.product.price || 0}
-        onOverride={handlePriceOverride}
+        currentPrice={
+          cart.find((item) => item.product.id === selectedProductId)?.product
+            .price || 0
+        }
+        onConfirm={(e) => {
+          handlePriceOverride(selectedProductId, e, "");
+        }}
+      />
+      <PaymentDialog
+        open={paymentDialogOpen}
+        onOpenChange={setPaymentDialogOpen}
+        total={total}
+        discount={discountAmount}
+        tax={tax}
       />
     </>
-  )
+  );
 }

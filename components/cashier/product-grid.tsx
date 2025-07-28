@@ -1,52 +1,54 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useAppStore } from "@/lib/store"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Plus, Package, Sparkles } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
+import { useState } from "react";
+import { useAppStore } from "@/lib/store";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Plus, Package, Sparkles } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export function ProductGrid() {
-  const { products, addToCart, hasPermission } = useAppStore()
-  const [selectedCategory, setSelectedCategory] = useState<string>("all")
-  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null)
-  const { toast } = useToast()
+  const { products, addToCart, hasPermission } = useAppStore();
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [hoveredProduct, setHoveredProduct] = useState<string | null>(null);
+  const { toast } = useToast();
 
-  const categories = ["all", ...new Set(products.map((p) => p.category))]
+  const categories = ["all", ...new Set(products.map((p) => p.category))];
   const filteredProducts =
-    selectedCategory === "all" ? products : products.filter((p) => p.category === selectedCategory)
+    selectedCategory === "all"
+      ? products
+      : products.filter((p) => p.category === selectedCategory);
 
   const handleAddToCart = (product: any) => {
     // Check permission first
-    // if (!hasPermission("process_transaction")) {
-    //   toast({
-   //      title: "❌ Akses ditolak",
-    //     description: "Anda tidak memiliki izin untuk memproses transaksi",
-    //     variant: "destructive",
-    //     duration: 3000,
-    //   })
-    //   return
-   //  }
+    if (!hasPermission("process_transaction")) {
+      toast({
+        title: "❌ Akses ditolak",
+        description: "Anda tidak memiliki izin untuk memproses transaksi",
+        variant: "destructive",
+        duration: 3000,
+      });
+      return;
+    }
 
     if (product.stock > 0) {
-      addToCart(product, 1)
+      addToCart(product, 1);
       toast({
         title: "✅ Berhasil ditambahkan",
         description: `${product.name} ditambahkan ke keranjang`,
         duration: 2000,
-      })
+      });
     } else {
       toast({
         title: "❌ Stok habis",
         description: `${product.name} tidak tersedia`,
         variant: "destructive",
         duration: 2000,
-      })
+      });
     }
-  }
+  };
 
   return (
     <div className="space-y-6">
@@ -102,13 +104,19 @@ export function ProductGrid() {
 
                 {/* Stock Badge with enhanced styling */}
                 <Badge
-                  variant={product.stock > 10 ? "default" : product.stock > 0 ? "secondary" : "destructive"}
+                  variant={
+                    product.stock > 10
+                      ? "default"
+                      : product.stock > 0
+                      ? "secondary"
+                      : "destructive"
+                  }
                   className={`absolute -top-1 -right-1 text-xs px-2 py-1 shadow-lg transition-all duration-300 ${
                     product.stock > 10
                       ? "bg-gradient-to-r from-green-500 to-green-600"
                       : product.stock > 0
-                        ? "bg-gradient-to-r from-yellow-500 to-orange-500"
-                        : "bg-gradient-to-r from-red-500 to-red-600"
+                      ? "bg-gradient-to-r from-yellow-500 to-orange-500"
+                      : "bg-gradient-to-r from-red-500 to-red-600"
                   }`}
                 >
                   {product.stock}
@@ -134,14 +142,20 @@ export function ProductGrid() {
                       ? "bg-gray-400 cursor-not-allowed"
                       : "bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transform hover:scale-105"
                   }`}
-                  disabled={product.stock === 0 || !hasPermission("process_transaction")}
+                  disabled={
+                    product.stock === 0 || !hasPermission("process_transaction")
+                  }
                   onClick={(e) => {
-                    e.stopPropagation()
-                    handleAddToCart(product)
+                    e.stopPropagation();
+                    handleAddToCart(product);
                   }}
                 >
                   <Plus className="h-4 w-4 mr-1 transition-transform duration-300 group-hover:rotate-90" />
-                  {product.stock === 0 ? "Habis" : !hasPermission("process_transaction") ? "No Access" : "Tambah"}
+                  {product.stock === 0
+                    ? "Habis"
+                    : !hasPermission("process_transaction")
+                    ? "No Access"
+                    : "Tambah"}
                 </Button>
               </div>
             </CardContent>
@@ -156,9 +170,11 @@ export function ProductGrid() {
             <Package className="h-12 w-12 text-muted-foreground/50" />
           </div>
           <h3 className="text-xl font-semibold mb-2">Tidak ada produk</h3>
-          <p className="text-muted-foreground">Coba ubah kategori atau tambah produk baru</p>
+          <p className="text-muted-foreground">
+            Coba ubah kategori atau tambah produk baru
+          </p>
         </div>
       )}
     </div>
-  )
+  );
 }
